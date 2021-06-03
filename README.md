@@ -18,7 +18,7 @@ C++
 Algorithms
 ```
 ```
-FK - "fast" fk (triogonometry approach)
+FK - "fast" - triogonometry approach
    - Denavit–Hartenberg
 IK - basic approach
 ```
