@@ -30,6 +30,9 @@ IK - basic approach
 ### Description
 This is a program that has python programming access features, so it may not be completely optimal. Main goal was created modular and simple program in C++, for testing approach IK and FK for 2-link SCARA robot. Program use matplotlib-cpp and meshgen header file libraries. Matplolib-cpp call python matplotlib, in this library is issue with plot more 3Dplots! Inspiration came from lab.n.3 [VRM Course](https://github.com/rparak/Programming-for-robots-and-manipulators-VRM/tree/main/Lab/3). Program may be compile for Linux-based OS as well as for Windows OS, just edit compile settings -> [VS Code](https://code.visualstudio.com/docs/cpp/introvideos-cpp).
 
+
+![plot](docs/screen1.png)
+
 ### Dependencies for build
 * Python + matplotlib
 
