@@ -7,18 +7,17 @@
 
 #include <stdexcept>
 
-using namespace std;
 namespace plt = matplotlibcpp;
 
 class Control{
     private:
         // defined private parametres which is used in calculation
-        vector<float> alpha {0.0, 0.0};
-        vector<float> d {0.0, 0.0};
-        vector<float> theta {0.0, 0.0};
-        vector<float> p {0,0};
-        vector<vector<float>> s_point {{0.0}, {0.0}};
-        vector<vector<float>> e_point {{0.0}, {0.0}};
+        std::vector<float> alpha {0.0, 0.0};
+        std::vector<float> d {0.0, 0.0};
+        std::vector<float> theta {0.0, 0.0};
+        std::vector<float> p {0,0};
+        std::vector<std::vector<float>> s_point {{0.0}, {0.0}};
+        std::vector<std::vector<float>> e_point {{0.0}, {0.0}};
         
         double Tn_theta[4][4] = {  
             {1, 0, 0, 0} ,
@@ -40,7 +39,7 @@ class Control{
             case 1:
                 DH_calc_fk(size);
             default:
-                throw runtime_error("[INFO] Don't exists option of calculation of FK!");
+                throw std::runtime_error("[INFO] Don't exists option of calculation of FK!");
                 break;
             }
         }
@@ -134,12 +133,12 @@ class Control{
             // 0 ≤ y ≤ π
             if(cosT_beta_numerator/cosT_beta_denumerator > 1){
                 theta[0] = atan2(p[1], p[0]);
-                throw runtime_error("[INFO] Error: Out of range!");
+                throw std::runtime_error("[INFO] Error: Out of range!");
             }
 
             else if(cosT_beta_numerator/cosT_beta_denumerator < -1){
                 theta[0] = atan2(p[1], p[0]) - M_PI;
-                throw runtime_error("[INFO] Error: Out of range!");
+                throw std::runtime_error("[INFO] Error: Out of range!");
             }
 
             else{
@@ -158,12 +157,12 @@ class Control{
             
             if(cosT_alpha_numerator/cosT_alpha_denumerator > 1){
                 theta[1] = M_PI;
-                throw runtime_error("[INFO] Error: Out of range!");
+                throw std::runtime_error("[INFO] Error: Out of range!");
             }
 
             else if(cosT_alpha_numerator/cosT_alpha_denumerator < -1){
                 theta[1] = 0.0;
-                throw runtime_error("[INFO] Error: Out of range!");
+                throw std::runtime_error("[INFO] Error: Out of range!");
             }
 
             else{
@@ -185,17 +184,17 @@ class Control{
         };
 
         void plot_envelop(){
-            vector<vector<float>> mesh {{0.0}, {0.0}};
+            std::vector<std::vector<float>> mesh {{0.0}, {0.0}};
 
-            vector<double> theta_1(100);
+            std::vector<double> theta_1(100);
             theta_1 = meshgen::linspace((ax_wr[0][0]) *  M_PI / 180, (ax_wr[0][1]) *  M_PI / 180, 100);
             
-            vector<double> theta_2(100);
+            std::vector<double> theta_2(100);
             theta_2 = meshgen::linspace((ax_wr[1][0]) *  M_PI / 180, (ax_wr[1][1]) *  M_PI / 180, 100);
 
             meshgen::mesh_grid<double, 0, 2> T1;
             meshgen::mesh_grid<double, 1, 2> T2;
-            tie(T1, T2) = meshgen::meshgrid(theta_1, theta_2);
+            std::tie(T1, T2) = meshgen::meshgrid(theta_1, theta_2);
 
             for (size_t i = 0; i < T1.size(); i++){
                 for (size_t j = 0; j < T2.size(); j++){
@@ -222,12 +221,12 @@ class Control{
             float axis_max = ((1)*(a[0] + a[1]) + 0.2);
             float axis_min = ((-1)*(a[0] + a[1]) - 0.2);
             
-            vector<float> aux_0 {0.0, a[0] * cos(theta[0])};
-            vector<float> aux_1 {0.0, a[0] * sin(theta[0])};
+            std::vector<float> aux_0 {0.0, a[0] * cos(theta[0])};
+            std::vector<float> aux_1 {0.0, a[0] * sin(theta[0])};
             
-            vector<vector<float>> base {{0.0}, {0.0}};
-            vector<vector<float>> joint {{a[0] * cos(theta[0])}, {a[0] * sin(theta[0])}};
-            vector<vector<float>> end_eff {{p[0]}, {p[1]}};
+            std::vector<std::vector<float>> base {{0.0}, {0.0}};
+            std::vector<std::vector<float>> joint {{a[0] * cos(theta[0])}, {a[0] * sin(theta[0])}};
+            std::vector<std::vector<float>> end_eff {{p[0]}, {p[1]}};
             
             plt::plot(aux_0, aux_1,              {{"color", "black"}, {"linewidth", "10"}});
 
@@ -255,20 +254,20 @@ class Control{
     public:
         // All specifed public parametres, which is used through alll class
         // importat states, this parametres is used for compute in anim_fk, anim_ik
-        vector<vector<float>> states_fk;
-        vector<vector<float>> states_ik;
+        std::vector<std::vector<float>> states_fk;
+        std::vector<std::vector<float>> states_ik;
         // configuration
-        vector<float> cfg;
+        std::vector<float> cfg;
 
         // axes reach range
-        vector<vector<float>> ax_wr;
+        std::vector<std::vector<float>> ax_wr;
         // arm length 
-        vector<float> a;
+        std::vector<float> a;
 
         // printing parametres
-        string robot_name;
-        string company;
-        string url_datasheet;
+        std::string robot_name;
+        std::string company;
+        std::string url_datasheet;
 
         // Public method:
         // input: swit = switch, decide FK computing method
@@ -278,7 +277,7 @@ class Control{
         // 3. check if is only 1. state, then static plot show(). 4. compute linspace between new
         // and old state, then compute in loop and show animation. 
         void anim_fk(int swit){            
-            vector<float> old_theta {0.0,0.0};
+            std::vector<float> old_theta {0.0,0.0};
             for (int i = 0; i < states_fk.size(); i++){
                 for(int k = 0; k < states_fk[i].size(); k++){
                     theta[k] = states_fk[i][k] * M_PI / 180;
@@ -297,8 +296,8 @@ class Control{
 
                 // If u not in 0. state, then compute between new and old state FK.
                 if (i != 0){
-                    vector<double> theta_x = meshgen::linspace(old_theta[0] + 0.0, theta[0] + 0.0, 20);
-                    vector<double> theta_y = meshgen::linspace(old_theta[1] + 0.0, theta[1] + 0.0, 20);
+                    std::vector<double> theta_x = meshgen::linspace(old_theta[0] + 0.0, theta[0] + 0.0, 20);
+                    std::vector<double> theta_y = meshgen::linspace(old_theta[1] + 0.0, theta[1] + 0.0, 20);
                     for (int l = 0; l < theta_x.size(); l++){
                         theta[0] = theta_x[l];
                         theta[1] = theta_y[l];
@@ -353,10 +352,10 @@ class Control{
         // and old state, then compute in loop and show animation. 
         void anim_ik(){
             if (states_ik.size() != cfg.size()){
-                throw runtime_error("[INFO] Check if match cfgs with points!");
+                throw std::runtime_error("[INFO] Check if match cfgs with points!");
             };
 
-            vector<float> old_p {0.0, 0.0};
+            std::vector<float> old_p {0.0, 0.0};
             for (int i = 0; i < states_ik.size(); i++){
                 for (int k = 0; k < states_ik[i].size(); k++){
                     p[k] = states_ik[i][k];
@@ -375,8 +374,8 @@ class Control{
                 }
                 
                 if (i != 0){
-                    vector<double> p_x = meshgen::linspace(old_p[0] + 0.0, p[0] + 0.0, 20);
-                    vector<double> p_y = meshgen::linspace(old_p[1] + 0.0, p[1] + 0.0, 20);
+                    std::vector<double> p_x = meshgen::linspace(old_p[0] + 0.0, p[0] + 0.0, 20);
+                    std::vector<double> p_y = meshgen::linspace(old_p[1] + 0.0, p[1] + 0.0, 20);
                     
                     for (int l = 0; l < p_x.size(); l++){
                         p[0] = p_x[l];
@@ -409,19 +408,19 @@ class Control{
 
         // Some simple and basic info printing
         void info(){
-            cout << "----------------------------------------------------------" << endl;
-            cout << "[INFO] VOB - Project" << endl;
-            cout << "[INFO] Simple Inverse Kinem. and Forward Kinem. calculator" << endl;
-            cout << "[INFO] Author: Martin Juricek" << endl;
-            cout << "[INFO] IACS FME BUT @2021" << endl;
-            cout << "----------------------------------------------------------" << endl;
-            cout << "[INFO] - SCARA robot -" << endl;
-            cout << "[INFO] Company: " << company << endl;
-            cout << "[INFO] Robot: " << robot_name << endl;
-            cout << "[INFO] angular reach axis 1: " << ax_wr[0][1]*2 << "°" << endl;
-            cout << "[INFO] angular reach axis 2: " << ax_wr[1][1]*2 << "°" << endl;
-            cout << "[INFO] Datasheet: " << url_datasheet << endl;
-            cout << "----------------------------------------------------------" << endl;
+            std::cout << "----------------------------------------------------------" << std::endl;
+            std::cout << "[INFO] VOB - Project" << std::endl;
+            std::cout << "[INFO] Simple Inverse Kinem. and Forward Kinem. calculator" << std::endl;
+            std::cout << "[INFO] Author: Martin Juricek" << std::endl;
+            std::cout << "[INFO] IACS FME BUT @2021" << std::endl;
+            std::cout << "----------------------------------------------------------" << std::endl;
+            std::cout << "[INFO] - SCARA robot -" << std::endl;
+            std::cout << "[INFO] Company: " << company << std::endl;
+            std::cout << "[INFO] Robot: " << robot_name << std::endl;
+            std::cout << "[INFO] angular reach axis 1: " << ax_wr[0][1]*2 << "°" << std::endl;
+            std::cout << "[INFO] angular reach axis 2: " << ax_wr[1][1]*2 << "°" << std::endl;
+            std::cout << "[INFO] Datasheet: " << url_datasheet << std::endl;
+            std::cout << "----------------------------------------------------------" << std::endl;
         }
 };
 
@@ -429,8 +428,8 @@ int main(){
     // There you can specifed parametres of your desired SCARA robot compute,
     // ax_ws = axis reach range = if you have angular reach, just split, as you can see in info
     // arm lengtg = just look at datasheet
-    vector<vector<float>> ax_wr {{-180.0, 180.0}, {-150.0, 150.0}};
-    vector<float> arm_length = {0.38, 0.24};
+    std::vector<std::vector<float>> ax_wr {{-180.0, 180.0}, {-150.0, 150.0}};
+    std::vector<float> arm_length = {0.38, 0.24};
 
     // Instance of class Control, there is can be specifed some info about SCARA,
     // also importnat is to add axis range [X,Y] + arm length, important for computing
@@ -445,7 +444,7 @@ int main(){
     // Show some info about program etc ... 
     scara.info();
 
-    cout << "[INFO] Example numero uno" << endl;
+    std::cout << "[INFO] Example numero uno" << std::endl;
     // Example n.1 - show using ik in single static show 
     // So if you don't to see animation, just set only 1 point with 1 conf.
     scara.states_ik.clear();
@@ -456,7 +455,7 @@ int main(){
 
     scara.anim_ik();
 
-    cout << "[INFO] Example numero due" << endl;
+    std::cout << "[INFO] Example numero due" << std::endl;
     // Example n.2 - show using ik in loop
     // It is important to feed vector of states and cfgs -> same size
     // So every point needs to specify his configuration! 
@@ -474,7 +473,7 @@ int main(){
     
     scara.states_fk.clear();
     
-    cout << "[INFO] Example numero tre" << endl;
+    std::cout << "[INFO] Example numero tre" << std::endl;
     // Example n.3 - show using fk in single static show 
     // So if you don't to see animation, just set only 1 point with 1 conf.
     scara.states_fk.push_back({35.0, 90.0});
@@ -482,7 +481,7 @@ int main(){
     
     scara.states_fk.clear();
     
-    cout << "[INFO] Example numero quattro" << endl;
+    std::cout << "[INFO] Example numero quattro" << std::endl;
     // Example n.4 - show non loop animation of FK
     // FK has 2 option of computing:
     // 0 - Fast Forward Kinematics
