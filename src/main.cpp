@@ -1,11 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <stdexcept>
 
 #include "matplotlibcpp.h"
 #include "Numcpp_light.hpp"
-
-#include <stdexcept>
 
 namespace plt = matplotlibcpp;
 
